@@ -1,0 +1,104 @@
+<% layout("/layouts/boilerplate") %>
+<div class="row mt-3 mb-5">
+    <div class="col-8 offset-2">
+        <br/><br/>
+        <h3>Create a New Listing</h3>
+        <form method="POST" action="/listings" novalidate class="needs-validation" enctype="multipart/form-data">
+            <div class="row">
+                <div class="mb-3 col-md-4">
+                    <label for="title" class="form-label">Title</label>
+                    <input name="listing[title]" placeholder="Add a catchy title" type="text" class="form-control" required />
+                    <div class="invalid-feedback">Please enter Title!</div>
+                </div>
+                <div class="mb-3 col-md-4">
+                    <label for="category" class="form-label">Category</label>
+                    <select name="listing[category]" class="form-select" required>
+                        <option value="" disabled selected>Select Category...</option>
+                        <option value="Trending">Trending</option>
+                        <option value="Rooms">Rooms</option>
+                        <option value="Iconic Cities">Iconic Cities</option>
+                        <option value="Mountains">Mountains</option>
+                        <option value="Castles">Castles</option>
+                        <option value="Amazing Pools">Amazing Pools</option>
+                        <option value="Camping">Camping</option>
+                        <option value="Farms">Farms</option>
+                        <option value="Arctic">Arctic</option>
+                        <option value="Domes">Domes</option>
+                        <option value="Boats">Boats</option>
+                    </select>
+                    <div class="invalid-feedback">Please select a category!</div>
+                </div>
+                <div class="mb-3 col-md-4">
+                    <label for="propertyType" class="form-label">Property Type</label>
+                    <select name="listing[propertyType]" class="form-select" required>
+                        <option value="" disabled selected>Select Type...</option>
+                        <option value="Home">Home</option>
+                        <option value="Hotel">Hotel</option>
+                        <option value="Resort">Resort</option>
+                        <option value="Apartment">Apartment</option>
+                        <option value="Villa">Villa</option>
+                        <option value="Cabin">Cabin</option>
+                        <option value="Farm house">Farm house</option>
+                        <option value="Beach house">Beach house</option>
+                        <option value="Complex">Complex</option>
+                        <option value="Private room">Private room</option>
+                        <option value="Room">Room</option>
+                    </select>
+                    <div class="invalid-feedback">Please select a property type!</div>
+                </div>
+            </div>
+            <div class="mb-3">
+                <label for="description" class="form-label">Description</label>
+                <textarea name="listing[description]" class="form-control" required></textarea>
+                <div class="invalid-feedback">Please enter a short description</div>
+            </div>
+            
+            <div class="mb-4 mt-4 p-3" style="border: 1px dashed #ccc; border-radius: 0.5rem; background-color: #fafafa;">
+                <label for="image" class="form-label fw-bold">Upload Property Images</label>
+                <input name="listing[image]" id="image" type="file" class="form-control" multiple required accept="image/*"/>
+                <div id="image-preview-container" class="d-flex flex-wrap gap-3 mt-3"></div>
+            </div>
+
+            <div class="row">
+                <div class="mb-3 col-md-4">
+                    <label for="price" class="form-label">Price</label>
+                    <input name="listing[price]" placeholder="1200" class="form-control" type="number" required />
+                    <div class="invalid-feedback">Please enter a valid price</div>
+                </div>
+                <div class="mb-3 col-md-4">
+                    <label for="maxGuests" class="form-label">Max Guests</label>
+                    <input name="listing[maxGuests]" type="number" class="form-control" placeholder="2" min="1" required />
+                    <div class="invalid-feedback">Please enter guest capacity</div>
+                </div>
+                <div class="mb-3 col-md-4">
+                    <label for="country" class="form-label">Country</label>
+                    <input name="listing[country]" placeholder="India" type="text" class="form-control" required />
+                    <div class="invalid-feedback">Please enter a country name</div>
+                </div>
+            </div>  
+            <div class="row">
+                <div class="mb-3 col-md-4">
+                    <label for="bedrooms" class="form-label">Bedrooms</label>
+                    <input name="listing[bedrooms]" type="number" class="form-control" placeholder="1" min="0" required />
+                    <div class="invalid-feedback">Please enter number of bedrooms</div>
+                </div>
+                <div class="mb-3 col-md-4">
+                    <label for="beds" class="form-label">Beds</label>
+                    <input name="listing[beds]" type="number" class="form-control" placeholder="1" min="1" required />
+                    <div class="invalid-feedback">Please enter number of beds</div>
+                </div>
+                <div class="mb-3 col-md-4">
+                    <label for="baths" class="form-label">Baths</label>
+                    <input name="listing[baths]" type="number" class="form-control" placeholder="1" min="0" required />
+                    <div class="invalid-feedback">Please enter number of baths</div>
+                </div>
+            </div>
+            <div class="mb-4">
+                <label for="location" class="form-label">Location</label>
+                <input name="listing[location]" placeholder="Varanasi, UP" type="text" class="form-control" required />
+                <div class="invalid-feedback">Please enter a location</div>
+            </div>
+            <button class="btn btn-dark add-btn mb-3" style="background-color: #fe424d; font-weight: 600; padding: 0.7rem 2rem;">Add Property</button>
+        </form>
+    </div>
+</div>

@@ -1,0 +1,68 @@
+<% layout("/layouts/boilerplate") %>
+
+<div class="row mt-4 mb-5">
+    <div class="col-12 text-center mb-5">
+        <h2 class="fw-bold">My Bookings</h2>
+        <p class="text-muted">Manage your upcoming trips and check-in codes</p>
+    </div>
+
+    <% if (bookings.length === 0) { %>
+        <div class="col-12 text-center mt-5">
+            <h4 class="text-muted">You haven't booked any trips yet!</h4>
+            <a href="/listings" class="btn mt-3 px-4 py-2" style="background-color: #fe424d; color: white; border: none; border-radius: 0.5rem; font-weight: 600;">Explore Listings</a>
+        </div>
+    <% } else { %>
+        <% for (let booking of bookings) { %>
+            <% if (booking.listing) { %> 
+                <div class="col-md-6 col-lg-4 mb-4">
+                    <div class="card h-100 shadow-sm border-0" style="border-radius: 1rem; overflow: hidden; background-color: #ffffff;">
+                        
+                        <% 
+                            let imageSrc = "";
+                            if (booking.listing.images && booking.listing.images.length > 0) {
+                                imageSrc = booking.listing.images[0].url;
+                            } else if (booking.listing.image && booking.listing.image.url) {
+                                imageSrc = booking.listing.image.url;
+                            } else if (typeof booking.listing.image === 'string') {
+                                imageSrc = booking.listing.image;
+                            }
+                        %>
+                        <img src="<%= imageSrc %>" class="card-img-top" alt="<%= booking.listing.title %>" style="height: 220px; object-fit: cover;">
+                        
+                        <div class="card-body p-4 d-flex flex-column">
+                            
+                            <h5 class="card-title fw-bold mb-1"><%= booking.listing.title %></h5>
+                            <p class="card-text text-muted mb-3" style="font-size: 0.95rem;">
+                                <i class="fa-solid fa-location-dot me-1" style="color: #fe424d;"></i> <%= booking.listing.location %>, <%= booking.listing.country %>
+                            </p>
+                            
+                            <div class="mt-auto">
+                                <hr class="text-muted opacity-25 mb-4">
+                                
+                                <div class="d-flex justify-content-between align-items-center mb-4 px-2">
+                                    <span class="text-muted fw-medium">Amount Paid:</span>
+                                    <b class="fs-5">₹<%= booking.totalPrice.toLocaleString("en-IN") %></b>
+                                </div>
+                                
+                                <div class="p-3 text-center mb-3" style="background-color: #fffafb; border-radius: 0.75rem; border: 1.5px dashed #fe424d;">
+                                    <span class="d-block text-muted mb-1" style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1.5px; font-weight: 600;">Check-in OTP</span>
+                                    <span style="font-size: 1.75rem; font-weight: 800; letter-spacing: 6px; color: #fe424d;">
+                                        <%= booking.checkInOTP %>
+                                    </span>
+                                </div>
+                                
+                                <div class="text-center text-muted" style="font-size: 0.85rem;">
+                                    Booked on: <span class="fw-medium"><%= booking.createdAt.toLocaleDateString('en-IN') %></span>
+                                </div>
+                                <a href="/my-bookings/<%= booking._id %>" class="btn btn-outline-dark w-100 mt-3 py-2 fw-semibold" style="border-radius: 0.5rem;">
+                                    View Detailed Receipt
+                                </a>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            <% } %>
+        <% } %>
+    <% } %>
+</div>

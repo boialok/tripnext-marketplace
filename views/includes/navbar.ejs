@@ -1,0 +1,193 @@
+<style>
+  .omni-search-bar {
+    border: 1px solid #ddd;
+    border-radius: 50px;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.08), 0 4px 12px rgba(0,0,0,0.05);
+    transition: box-shadow 0.2s ease;
+    padding: 0.3rem 0.5rem;
+    background-color: white;
+    display: flex;
+    align-items: center;
+    width: auto;
+    margin: 0 auto;
+  }
+  .omni-search-bar:hover {
+    box-shadow: 0 2px 4px rgba(0,0,0,0.18);
+  }
+  .search-divider {
+    height: 24px;
+    width: 1px;
+    background-color: #ddd;
+    margin: 0 10px;
+  }
+  .search-input {
+    border: none;
+    background: transparent;
+    outline: none;
+    padding: 0.5rem;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #222222;
+  }
+  .search-input::placeholder {
+    font-weight: 400;
+    color: #717171;
+  }
+  .search-input:focus {
+     outline: none;
+     box-shadow: none;
+  }
+  .search-btn-circle {
+    background-color: #fe424d;
+    color: white;
+    border-radius: 50%;
+    width: 35px;
+    height: 35px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    margin-left: 5px;
+    transition: background-color 0.2s ease;
+  }
+  .search-btn-circle:hover {
+    background-color: #e0313b;
+  }
+</style>
+
+<nav class="navbar navbar-expand-md navbar-light bg-body-light border-bottom sticky-top">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="/listings"><i class="fa-solid fa-compass" style="font-size: 2rem; color: #fe424d;"></i></a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+      
+      <div class="navbar-nav">
+        <a class="nav-link" href="/listings"><h4><b>TripNext</b></h4></a>
+      </div>
+      
+      <div class="navbar-nav mx-auto">
+        <form class="d-flex omni-search-bar" role="search" action="/listings/filter" method="GET">
+          <input class="search-input" type="text" name="city" placeholder="Anywhere" style="width: 120px;" />
+          <div class="search-divider"></div>
+          <input class="search-input" type="text" name="dates" placeholder="Any week" onfocus="(this.type='date')" onblur="(this.type='text')" style="width: 120px;" />
+          <div class="search-divider"></div>
+          <input class="search-input" type="number" name="guests" placeholder="Add guests" min="1" style="width: 110px;" />
+          <button class="search-btn-circle" type="submit">
+              <i class="fa-solid fa-magnifying-glass"></i>
+          </button>
+        </form>
+      </div>
+      
+      <div class="navbar-nav ms-auto align-items-center">
+        
+        <% if(!currUser) { %>
+            <a class="nav-link fw-semibold me-3" href="/signup">Sign up</a>
+            <a class="nav-link fw-semibold me-3" href="/login">Log in</a>
+        <% } else { %>
+            
+            <div class="d-flex align-items-center">
+                <a id="navAddProperty" href="/listings/new" class="nav-link fw-semibold me-3 d-none" style="color: #222;">
+                    Add your property
+                </a>
+
+                <a id="navTopSwitch" href="#" class="nav-link fw-semibold me-3 rounded-pill px-3 py-2" style="transition: background-color 0.2s;">
+                    Switch to hosting
+                </a>
+
+                <div class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" style="background: white; border: 1px solid #dddddd; padding: 5px 5px 5px 12px; border-radius: 30px; box-shadow: 0 1px 2px rgba(0,0,0,0.08);">
+                        <i class="fa-solid fa-bars me-2 text-muted" style="font-size: 1.1rem;"></i>
+                        <div class="rounded-circle text-white d-flex align-items-center justify-content-center ms-1" style="width: 32px; height: 32px; background-color: #222222; font-weight: 600;">
+                            <%= currUser.username.charAt(0).toUpperCase() %>
+                        </div>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end shadow border-0 mt-2" aria-labelledby="userDropdown" style="border-radius: 1rem; width: 250px; padding: 12px 0;">
+                        
+                        <li id="dropWishlist"><a class="dropdown-item py-2 fw-semibold" href="/wishlist">
+                            <i class="fa-regular fa-heart me-3 fs-6 text-dark" style="width: 20px;"></i>Wishlists
+                        </a></li>
+                        
+                        <li><a id="dropBookings" class="dropdown-item py-2 fw-semibold" href="/my-bookings">
+                            <img src="/favicon.svg" alt="TripNext" class="me-3" style="width: 18px; height: 18px; object-fit: contain;">My Bookings
+                        </a></li>
+                        
+                        <li><a class="dropdown-item py-2 fw-semibold" href="#">
+                            <i class="fa-regular fa-message me-3 fs-6 text-dark" style="width: 20px;"></i>Messages
+                        </a></li>
+                        
+                        <li><a id="dropProfile" class="dropdown-item py-2 fw-semibold" href="/profile">
+                            <i class="fa-regular fa-circle-user me-3 fs-6 text-dark" style="width: 20px;"></i>Profile
+                        </a></li>
+                        
+                        <li><hr class="dropdown-divider my-2 opacity-10"></li>
+                        
+                        <li><a class="dropdown-item py-2" href="#" onclick="toggleAppMode(event)">
+                            <div id="dropSwitchText" class="fw-semibold text-dark">Become a host</div>
+                        </a></li>
+                        
+                        <li><hr class="dropdown-divider my-2 opacity-10"></li>
+                        
+                        <li><a class="dropdown-item py-2" href="/logout" style="color: #444;">Log out</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <script>
+            document.addEventListener("DOMContentLoaded", () => {
+                const currentMode = localStorage.getItem("tripNextMode") || "traveler";
+                
+                const addPropertyBtn = document.getElementById("navAddProperty");
+                const topSwitchBtn = document.getElementById("navTopSwitch");
+                
+                const dropWishlist = document.getElementById("dropWishlist");
+                const dropBookings = document.getElementById("dropBookings");
+                const dropProfile = document.getElementById("dropProfile");
+                const dropSwitchText = document.getElementById("dropSwitchText");
+
+                if (currentMode === "host") {
+                    // Hosting Mode UI Settings
+                    addPropertyBtn.classList.remove("d-none"); 
+                    topSwitchBtn.innerText = "Switch to travelling";
+                    topSwitchBtn.onclick = (e) => switchMode(e, "traveler", "/listings");
+
+                    dropWishlist.classList.add("d-none"); 
+                    dropBookings.href = "/host-bookings"; 
+                    dropProfile.href = "/profile"; 
+                    dropSwitchText.innerText = "Become a traveller";
+                } else {
+                    // Travelling Mode UI Settings
+                    addPropertyBtn.classList.add("d-none"); 
+                    topSwitchBtn.innerText = "Switch to hosting";
+                    topSwitchBtn.onclick = (e) => switchMode(e, "host", "/profile");
+
+                    dropWishlist.classList.remove("d-none"); 
+                    dropBookings.href = "/my-bookings"; 
+                    dropProfile.href = "/account"; 
+                    dropSwitchText.innerText = "Become a host";
+                }
+            });
+
+            function toggleAppMode(e) {
+                e.preventDefault();
+                const currentMode = localStorage.getItem("tripNextMode") || "traveler";
+                if (currentMode === "traveler") {
+                    switchMode(e, "host", "/profile");
+                } else {
+                    switchMode(e, "traveler", "/listings");
+                }
+            }
+
+            function switchMode(e, mode, redirectUrl) {
+                e.preventDefault();
+                localStorage.setItem("tripNextMode", mode);
+                window.location.href = redirectUrl;
+            }
+            </script>
+        <% } %>
+
+      </div>
+    </div>
+  </div>
+</nav>

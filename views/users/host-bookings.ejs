@@ -1,0 +1,77 @@
+<% layout("/layouts/boilerplate") %>
+
+<div class="row mt-5 mb-5">
+    <div class="col-12 mb-4 d-flex justify-content-between align-items-end border-bottom pb-3">
+        <div>
+            <h2 class="fw-bold mb-1">Host Reservations</h2>
+            <p class="text-muted mb-0">Manage incoming guests and verify check-in codes.</p>
+        </div>
+        <div class="text-end">
+            <span class="badge bg-dark px-3 py-2 rounded-pill"><%= hostBookings.length %> Total Bookings</span>
+        </div>
+    </div>
+
+    <div class="col-12">
+        <% if (hostBookings.length === 0) { %>
+            <div class="p-5 text-center bg-light rounded-4 border border-dashed mt-3">
+                <i class="fa-regular fa-calendar-xmark fs-1 text-muted mb-3"></i>
+                <h4 class="text-muted fw-semibold">No reservations yet.</h4>
+                <p class="text-muted">When travellers book your properties, their details will appear here.</p>
+            </div>
+        <% } else { %>
+            <div class="row g-4 mt-1">
+                <% for (let booking of hostBookings) { %>
+                    <div class="col-12">
+                        <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+                            <div class="row g-0 align-items-center">
+                                
+                                <div class="col-md-3 col-lg-2">
+                                    <% 
+                                        let imageSrc = "";
+                                        if (booking.listing.images && booking.listing.images.length > 0) imageSrc = booking.listing.images[0].url;
+                                        else if (booking.listing.image && booking.listing.image.url) imageSrc = booking.listing.image.url;
+                                    %>
+                                    <img src="<%= imageSrc %>" class="img-fluid w-100 h-100" style="object-fit: cover; min-height: 140px;" alt="Property">
+                                </div>
+                                
+                                <div class="col-md-5 col-lg-6 p-4">
+                                    <h5 class="fw-bold mb-1"><%= booking.listing.title %></h5>
+                                    <p class="text-muted mb-3" style="font-size: 0.9rem;">
+                                        <i class="fa-solid fa-location-dot me-1" style="color: #fe424d;"></i> <%= booking.listing.location %>
+                                    </p>
+                                    
+                                    <div class="d-flex align-items-center">
+                                        <div class="rounded-circle bg-dark text-white d-flex justify-content-center align-items-center me-3" style="width: 40px; height: 40px; font-weight: bold;">
+                                            <%= booking.author.username.charAt(0).toUpperCase() %>
+                                        </div>
+                                        <div>
+                                            <p class="mb-0 fw-semibold text-dark" style="font-size: 0.95rem;">Guest: <%= booking.author.username %></p>
+                                            <p class="mb-0 text-muted" style="font-size: 0.85rem;"><%= booking.author.email %></p>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-4 col-lg-4 p-4 border-start bg-light h-100 d-flex flex-column justify-content-center">
+                                    <div class="d-flex justify-content-between align-items-center mb-3">
+                                        <span class="text-muted fw-medium fs-6">Payout:</span>
+                                        <span class="fs-4 fw-bold text-success">₹<%= booking.totalPrice.toLocaleString("en-IN") %></span>
+                                    </div>
+                                    
+                                    <div class="p-2 text-center bg-white" style="border-radius: 0.5rem; border: 1.5px dashed #fe424d;">
+                                        <span class="d-block text-muted text-uppercase fw-bold" style="font-size: 0.7rem; letter-spacing: 1px;">Verify Guest OTP</span>
+                                        <span class="fw-bold" style="font-size: 1.25rem; letter-spacing: 4px; color: #fe424d;"><%= booking.checkInOTP %></span>
+                                    </div>
+                                    
+                                    <div class="text-center text-muted mt-2" style="font-size: 0.75rem;">
+                                        Booked: <%= booking.createdAt.toLocaleDateString('en-IN') %>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                <% } %>
+            </div>
+        <% } %>
+    </div>
+</div>

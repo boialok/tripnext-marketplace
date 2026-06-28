@@ -1,0 +1,103 @@
+<% layout("/layouts/boilerplate") %>
+<div class="row mt-3">
+    <div class="col-8 offset-2">
+      <h3>Edit your Listing</h3>
+        <form method="POST" action="/listings/<%= listing._id %>?_method=PUT" novalidate class="needs-validation" enctype="multipart/form-data">
+            <div class="row">
+                <div class="mb-3 col-md-4">
+                    <label for="title" class="form-label">Title</label>
+                    <input name="listing[title]" value="<%= listing.title %>" type="text" class="form-control" required />
+                    <div class="valid-feedback">Title looks good!</div>
+                </div>
+                <div class="mb-3 col-md-4">
+                    <label for="category" class="form-label">Category</label>
+                    <select name="listing[category]" class="form-select" required>
+                        <option value="Trending" <%= listing.category === 'Trending' ? 'selected' : '' %>>Trending</option>
+                        <option value="Rooms" <%= listing.category === 'Rooms' ? 'selected' : '' %>>Rooms</option>
+                        <option value="Iconic Cities" <%= listing.category === 'Iconic Cities' ? 'selected' : '' %>>Iconic Cities</option>
+                        <option value="Mountains" <%= listing.category === 'Mountains' ? 'selected' : '' %>>Mountains</option>
+                        <option value="Castles" <%= listing.category === 'Castles' ? 'selected' : '' %>>Castles</option>
+                        <option value="Amazing Pools" <%= listing.category === 'Amazing Pools' ? 'selected' : '' %>>Amazing Pools</option>
+                        <option value="Camping" <%= listing.category === 'Camping' ? 'selected' : '' %>>Camping</option>
+                        <option value="Farms" <%= listing.category === 'Farms' ? 'selected' : '' %>>Farms</option>
+                        <option value="Arctic" <%= listing.category === 'Arctic' ? 'selected' : '' %>>Arctic</option>
+                        <option value="Domes" <%= listing.category === 'Domes' ? 'selected' : '' %>>Domes</option>
+                        <option value="Boats" <%= listing.category === 'Boats' ? 'selected' : '' %>>Boats</option>
+                    </select>
+                    <div class="invalid-feedback">Please select a category!</div>
+                </div>
+                <div class="mb-3 col-md-4">
+                    <label for="propertyType" class="form-label">Property Type</label>
+                    <select name="listing[propertyType]" class="form-select" required>
+                        <option value="" disabled selected>Select Type...</option>
+                        <option value="Home" <%= typeof listing !== 'undefined' && listing.propertyType === 'Home' ? 'selected' : '' %>>Home</option>
+                        <option value="Hotel" <%= typeof listing !== 'undefined' && listing.propertyType === 'Hotel' ? 'selected' : '' %>>Hotel</option>
+                        <option value="Resort" <%= typeof listing !== 'undefined' && listing.propertyType === 'Resort' ? 'selected' : '' %>>Resort</option>
+                        <option value="Apartment" <%= typeof listing !== 'undefined' && listing.propertyType === 'Apartment' ? 'selected' : '' %>>Apartment</option>
+                        <option value="Villa" <%= typeof listing !== 'undefined' && listing.propertyType === 'Villa' ? 'selected' : '' %>>Villa</option>
+                        <option value="Cabin" <%= typeof listing !== 'undefined' && listing.propertyType === 'Cabin' ? 'selected' : '' %>>Cabin</option>
+                        <option value="Farm house" <%= typeof listing !== 'undefined' && listing.propertyType === 'Farm house' ? 'selected' : '' %>>Farm house</option>
+                        <option value="Beach house" <%= typeof listing !== 'undefined' && listing.propertyType === 'Beach house' ? 'selected' : '' %>>Beach house</option>
+                        <option value="Complex" <%= typeof listing !== 'undefined' && listing.propertyType === 'Complex' ? 'selected' : '' %>>Complex</option>
+                        <option value="Private room" <%= typeof listing !== 'undefined' && listing.propertyType === 'Private room' ? 'selected' : '' %>>Private room</option>
+                        <option value="Room" <%= typeof listing !== 'undefined' && listing.propertyType === 'Room' ? 'selected' : '' %>>Room</option>
+                    </select>
+                    <div class="invalid-feedback">Please select a property type!</div>
+                </div>
+            </div>
+            <div class="mb-3">
+                <label for="description" class="form-label">Description</label>
+                <textarea name="listing[description]" class="form-control" required><%= listing.description %></textarea>
+                <div class="invalid-feedback">Please enter a short description</div>
+            </div>
+            <div class="mb-3">
+                <p>Original Property image</p>
+                <img src="<%= originalImageUrl %>" alt="Original property image" />
+            </div>
+            <div class="mb-3">
+                <label for="image" class="form-label">Upload Additional Images</label>
+                <input name="listing[image]" type="file" class="form-control" multiple/>
+            </div>
+            <div class="row">
+                <div class="mb-3 col-md-4">
+                    <label for="price" class="form-label">Price</label>
+                    <input name="listing[price]" value="<%= listing.price %>" type="number" class="form-control" required />
+                    <div class="invalid-feedback">Please enter a valid price</div>
+                </div>
+                <div class="mb-3 col-md-4">
+                    <label for="maxGuests" class="form-label">Max Guests</label>
+                    <input name="listing[maxGuests]" value="<%= listing.maxGuests %>" type="number" class="form-control" min="1" required />
+                    <div class="invalid-feedback">Please enter guest capacity</div>
+                </div>
+                <div class="mb-3 col-md-4">
+                    <label for="country" class="form-label">Country</label>
+                    <input name="listing[country]" value="<%= listing.country %>" type="text" class="form-control" required />
+                    <div class="invalid-feedback">Please enter a country name</div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="mb-3 col-md-4">
+                    <label for="bedrooms" class="form-label">Bedrooms</label>
+                    <input name="listing[bedrooms]" value="<%= listing.bedrooms %>" type="number" class="form-control" min="0" required />
+                    <div class="invalid-feedback">Please enter number of bedrooms</div>
+                </div>
+                <div class="mb-3 col-md-4">
+                    <label for="beds" class="form-label">Beds</label>
+                    <input name="listing[beds]" value="<%= listing.beds %>" type="number" class="form-control" min="1" required />
+                    <div class="invalid-feedback">Please enter number of beds</div>
+                </div>
+                <div class="mb-3 col-md-4">
+                    <label for="baths" class="form-label">Baths</label>
+                    <input name="listing[baths]" value="<%= listing.baths %>" type="number" class="form-control" min="0" required />
+                    <div class="invalid-feedback">Please enter number of baths</div>
+                </div>
+            </div>
+            <div class="mb-3">
+                <label for="location" class="form-label">Location</label>
+                <input name="listing[location]" value="<%= listing.location %>" type="text" class="form-control" required />
+                <div class="invalid-feedback">Please enter a location</div>
+            </div>
+            <button class="btn btn-dark edit-btn mb-3">Edit</button>
+        </form>
+    </div>
+</div>

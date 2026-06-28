@@ -1,0 +1,76 @@
+<% layout("/layouts/boilerplate") %>
+
+<div class="row mt-5 mb-5">
+    <div class="col-lg-4 mb-4">
+        <div class="card shadow-sm border-0 rounded-4 p-4 text-center sticky-top" style="top: 100px; background-color: #f8f9fa;">
+            
+            <div class="rounded-circle bg-dark text-white d-flex align-items-center justify-content-center mx-auto mb-3" style="width: 120px; height: 120px; font-size: 3rem; font-weight: bold; background-color: #fe424d !important;">
+                <%= currUser.username.charAt(0).toUpperCase() %>
+            </div>
+            
+            <h3 class="fw-bold mb-1"><%= currUser.username %></h3>
+            <p class="text-muted mb-3"><%= currUser.email %></p>
+            
+            <hr class="opacity-25 w-75 mx-auto">
+            
+            <div class="d-flex justify-content-between px-3 mt-3">
+                <span class="text-muted fw-medium">Properties Hosted:</span>
+                <span class="fw-bold text-dark"><%= myListings.length %></span>
+            </div>
+            
+            <a href="/listings/new" class="btn btn-dark w-100 mt-4 py-2 fw-semibold rounded-3" style="background-color: #fe424d; border: none;">
+                <i class="fa-solid fa-plus me-2"></i> List a New Property
+            </a>
+        </div>
+    </div>
+
+    <div class="col-lg-8">
+        <h2 class="fw-bold mb-4">Your Property Hosting Dashboard</h2>
+        
+        <% if (myListings.length === 0) { %>
+            <div class="p-5 text-center bg-light rounded-4 border border-dashed">
+                <h4 class="text-muted fw-semibold">You aren't hosting any properties yet.</h4>
+                <p class="text-muted">Turn your extra space into extra income on TripNext.</p>
+                <a href="/listings/new" class="btn btn-outline-dark mt-3 fw-medium rounded-3 px-4 py-2">Become a Host</a>
+            </div>
+        <% } else { %>
+            <div class="row">
+                <% for (let listing of myListings) { %>
+                    <div class="col-md-6 mb-4">
+                        <div class="card h-100 shadow-sm border-0 rounded-4 overflow-hidden">
+                            <% 
+                                let imageSrc = "";
+                                if (listing.images && listing.images.length > 0) {
+                                    imageSrc = listing.images[0].url;
+                                } else if (listing.image && listing.image.url) {
+                                    imageSrc = listing.image.url;
+                                } else if (typeof listing.image === 'string') {
+                                    imageSrc = listing.image;
+                                }
+                            %>
+                            
+                            <div class="position-relative">
+                                <img src="<%= imageSrc %>" class="card-img-top" style="height: 200px; object-fit: cover;">
+                                <div class="position-absolute top-0 end-0 bg-white px-2 py-1 m-2 rounded-2 shadow-sm fw-bold" style="font-size: 0.85rem; color: #fe424d;">
+                                    ₹<%= listing.price.toLocaleString("en-IN") %> / night
+                                </div>
+                            </div>
+
+                            <div class="card-body p-4 d-flex flex-column">
+                                <h5 class="card-title fw-bold mb-1"><%= listing.title %></h5>
+                                <p class="card-text text-muted mb-3" style="font-size: 0.9rem;">
+                                    <i class="fa-solid fa-location-dot me-1" style="color: #fe424d;"></i> <%= listing.location %>, <%= listing.country %>
+                                </p>
+                                
+                                <div class="mt-auto pt-3 border-top d-flex justify-content-between">
+                                    <a href="/listings/<%= listing._id %>" class="btn btn-sm btn-outline-dark fw-medium px-3 rounded-pill">View</a>
+                                    <a href="/listings/<%= listing._id %>/edit" class="btn btn-sm btn-dark fw-medium px-3 rounded-pill">Edit Details</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                <% } %>
+            </div>
+        <% } %>
+    </div>
+</div>

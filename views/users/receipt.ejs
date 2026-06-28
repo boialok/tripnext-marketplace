@@ -1,0 +1,86 @@
+<% layout("/layouts/boilerplate") %>
+
+<div class="row mt-5 mb-5 justify-content-center">
+    <div class="col-md-8 col-lg-6">
+        
+        <a href="/my-bookings" class="text-decoration-none text-muted mb-3 d-inline-block">
+            <i class="fa-solid fa-arrow-left me-2"></i> Back to Dashboard
+        </a>
+
+        <div class="card shadow-sm border-0" style="border-radius: 1rem; overflow: hidden;">
+            
+            <div class="text-white text-center p-4" style="background-color: #fe424d;">
+                <h3 class="fw-bold mb-1">Booking Confirmed</h3>
+                <p class="mb-0 opacity-75" style="font-size: 0.9rem;">Receipt #<%= booking.paymentId %></p>
+            </div>
+            
+            <div class="card-body p-5">
+                
+                <div class="row mb-4">
+                    <div class="col-sm-6">
+                        <p class="text-muted mb-1 text-uppercase" style="font-size: 0.75rem; letter-spacing: 1px; font-weight: 600;">Guest</p>
+                        <h6 class="fw-bold mb-0"><%= currUser.username %></h6>
+                        <p class="text-muted mb-0" style="font-size: 0.85rem;"><%= currUser.email %></p>
+                    </div>
+                    <div class="col-sm-6 text-sm-end mt-3 mt-sm-0">
+                        <p class="text-muted mb-1 text-uppercase" style="font-size: 0.75rem; letter-spacing: 1px; font-weight: 600;">Date Issued</p>
+                        <h6 class="fw-bold mb-0"><%= booking.createdAt.toLocaleDateString('en-IN') %></h6>
+                        <p class="text-muted mb-0" style="font-size: 0.85rem;"><%= booking.createdAt.toLocaleTimeString('en-IN') %></p>
+                    </div>
+                </div>
+
+                <hr class="opacity-25 mb-4">
+
+                <div class="d-flex align-items-center mb-4 bg-light p-3 rounded">
+                    <% 
+                        let imageSrc = "";
+                        if (booking.listing.images && booking.listing.images.length > 0) {
+                            imageSrc = booking.listing.images[0].url;
+                        } else if (booking.listing.image && booking.listing.image.url) {
+                            imageSrc = booking.listing.image.url;
+                        } else if (typeof booking.listing.image === 'string') {
+                            imageSrc = booking.listing.image;
+                        }
+                    %>
+                    <img src="<%= imageSrc %>" alt="<%= booking.listing.title %>" class="rounded" style="width: 80px; height: 80px; object-fit: cover;">
+                    <div class="ms-3">
+                        <h5 class="fw-bold mb-1"><%= booking.listing.title %></h5>
+                        <p class="text-muted mb-0" style="font-size: 0.9rem;">
+                            <i class="fa-solid fa-location-dot me-1" style="color: #fe424d;"></i> <%= booking.listing.location %>, <%= booking.listing.country %>
+                        </p>
+                    </div>
+                </div>
+
+                <div class="p-4 text-center mb-4" style="background-color: #fffafb; border-radius: 0.75rem; border: 2px dashed #fe424d;">
+                    <p class="text-muted mb-1 text-uppercase fw-bold" style="letter-spacing: 2px; font-size: 0.85rem;">Check-In OTP</p>
+                    <h1 class="display-4 fw-bold mb-0" style="color: #fe424d; letter-spacing: 10px;"><%= booking.checkInOTP %></h1>
+                    <p class="text-muted mt-2 mb-0" style="font-size: 0.9rem;">Please present this code to your host upon arrival.</p>
+                </div>
+
+                <hr class="opacity-25 mb-4">
+
+                <div class="d-flex justify-content-between mb-2">
+                    <span class="text-muted">Payment Gateway</span>
+                    <span class="fw-medium">Razorpay Secured</span>
+                </div>
+                <div class="d-flex justify-content-between mb-2">
+                    <span class="text-muted">Transaction ID</span>
+                    <span class="fw-medium"><%= booking.paymentId %></span>
+                </div>
+                
+                <div class="d-flex justify-content-between mt-4 pt-3 border-top">
+                    <span class="fs-5 fw-bold text-dark">Total Amount Paid</span>
+                    <span class="fs-4 fw-bold" style="color: #198754;">₹<%= booking.totalPrice.toLocaleString("en-IN") %></span>
+                </div>
+
+            </div>
+            
+            <div class="card-footer bg-white text-center p-4 border-0">
+                <button onclick="window.print()" class="btn px-4 py-2" style="background-color: #222; color: white; font-weight: 600; border-radius: 0.5rem;">
+                    <i class="fa-solid fa-print me-2"></i> Print / Save as PDF
+                </button>
+            </div>
+
+        </div>
+    </div>
+</div>

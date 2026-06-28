@@ -1,0 +1,251 @@
+<% layout("/layouts/boilerplate") %>
+<style>
+    #filters {
+        display: flex;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        align-items: center;
+        gap: 2.5rem;
+        margin-top: 1rem;
+        padding-bottom: 1rem;
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+    }
+    #filters::-webkit-scrollbar {
+        display: none;
+    }
+    .filter-link {
+        text-decoration: none;
+        color: inherit;
+    }
+    .filter {
+        text-align: center;
+        opacity: 0.6;
+        cursor: pointer;
+        transition: opacity 0.2s, transform 0.2s;
+        min-width: max-content;
+    }
+    .filter:hover {
+        opacity: 1;
+        transform: scale(1.05);
+    }
+    .filter p {
+        font-size: 0.85rem;
+        margin-top: 0.3rem;
+        margin-bottom: 0;
+        font-weight: 500;
+    }
+    .filter i {
+        font-size: 1.4rem;
+    }
+    .location-header {
+        display: flex;
+        align-items: center;
+        margin-top: 3rem;
+        margin-bottom: 1.5rem;
+    }
+    .location-title {
+        font-size: 1.8rem;
+        font-weight: 600;
+        margin-bottom: 0;
+        color: #222;
+        letter-spacing: -0.02em;
+    }
+    .circle-arrow {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 34px;
+        height: 34px;
+        border-radius: 50%;
+        background-color: #f1f1f1;
+        color: #222;
+        text-decoration: none;
+        margin-left: 12px;
+        transition: background-color 0.2s;
+    }
+    .circle-arrow:hover {
+        background-color: #e4e4e4;
+        color: #000;
+    }
+    .listing-link {
+        text-decoration: none;
+        color: inherit;
+    }
+</style>
+<div id="filters">
+    <a href="/listings/filter?category=Trending" class="filter-link">
+        <div class="filter">
+            <div><i class="fa-solid fa-fire"></i></div>
+            <p>Trending</p>
+        </div>
+    </a>
+    <a href="/listings/filter?category=Rooms" class="filter-link">
+        <div class="filter">
+            <div><i class="fa-solid fa-bed"></i></div>
+            <p>Rooms</p>
+        </div>
+    </a>
+    <a href="/listings/filter?category=Iconic Cities" class="filter-link">
+        <div class="filter">
+            <div><i class="fa-solid fa-mountain-city"></i></div>
+            <p>Iconic Cities</p>
+        </div>
+    </a>
+    <a href="/listings/filter?category=Mountains" class="filter-link">
+        <div class="filter">
+            <div><i class="fa-solid fa-mountain"></i></div>
+            <p>Mountains</p>
+        </div>
+    </a>
+    <a href="/listings/filter?category=Castles" class="filter-link">
+        <div class="filter">
+            <div><i class="fa-brands fa-fort-awesome"></i></div>
+            <p>Castles</p>
+        </div>
+    </a>
+    <a href="/listings/filter?category=Amazing Pools" class="filter-link">
+        <div class="filter">
+            <div><i class="fa-solid fa-person-swimming"></i></div>
+            <p>Amazing Pools</p>
+        </div>
+    </a>
+    <a href="/listings/filter?category=Camping" class="filter-link">
+        <div class="filter">
+            <div><i class="fa-solid fa-campground"></i></div>
+            <p>Camping</p>
+        </div>
+    </a>
+    <a href="/listings/filter?category=Farms" class="filter-link">
+        <div class="filter">
+            <div><i class="fa-solid fa-wheat-awn"></i></div>
+            <p>Farms</p>
+        </div>
+    </a>
+    <a href="/listings/filter?category=Arctic" class="filter-link">
+        <div class="filter">
+            <div><i class="fa-solid fa-person-snowboarding"></i></div>
+            <p>Arctic</p>
+        </div>
+    </a>
+    <a href="/listings/filter?category=Domes" class="filter-link">
+        <div class="filter">
+            <div><i class="fa-solid fa-igloo"></i></div>
+            <p>Domes</p>
+        </div>
+    </a>
+    <a href="/listings/filter?category=Boats" class="filter-link">
+        <div class="filter">
+            <div><i class="fa-solid fa-sailboat"></i></div>
+            <p>Boats</p>
+        </div>
+    </a>
+</div>
+<% if (groupedListings) { %>
+    <% 
+        const prefixes = ["Stay in", "Homes in", "Places to stay in", "Check out homes in"];
+        let prefixIndex = 0;
+    %>
+    <% for(let city in groupedListings) { %>
+        <% 
+            let currentPrefix = prefixes[prefixIndex % prefixes.length];
+            prefixIndex++;
+        %>
+        <div class="location-header">
+            <h2 class="location-title"><%= currentPrefix %> <%= city %></h2>
+            <a href="/listings/filter?city=<%= encodeURIComponent(city) %>" class="circle-arrow">
+                <i class="fa-solid fa-arrow-right"></i>
+            </a>
+        </div>
+        <div class="row row-cols-lg-4 row-cols-md-3 row-cols-sm-1 mt-2">
+            <% groupedListings[city].slice(0, 4).forEach(listing => { %>
+                <div class="col mb-4">
+                    <div class="card listing-card shadow-sm position-relative" style="border-radius: 1rem; border: none;">
+                        <% if(typeof currUser !== 'undefined' && currUser) { %>
+                            <i class="fa-heart wishlist-icon <%= currUser.wishlist && currUser.wishlist.includes(listing._id) ? 'fa-solid' : 'fa-regular' %>" data-id="<%= listing._id %>"></i>
+                        <% } %>
+                        <a href="/listings/<%= listing._id %>" class="listing-link">
+                            <% 
+                                let imgUrl = "";
+                                if (listing.images && listing.images.length > 0) {
+                                    imgUrl = listing.images[0].url || listing.images[0];
+                                } else if (listing.image) {
+                                    if (typeof listing.image === 'string') {
+                                        imgUrl = listing.image;
+                                    } else if (Array.isArray(listing.image) && listing.image.length > 0) {
+                                        imgUrl = listing.image[0].url || listing.image[0];
+                                    } else if (listing.image.url) {
+                                        imgUrl = listing.image.url;
+                                    }
+                                }
+                            %>
+                            <% if (imgUrl) { %>
+                                <img src="<%= imgUrl %>" class="card-img-top" alt="listing_image" style="height: 18rem; object-fit: cover; border-radius: 1rem 1rem 0 0;">
+                            <% } else { %>
+                                <div class="card-img-top d-flex flex-column align-items-center justify-content-center" style="height: 18rem; background-color: #e9ecef; color: #a1a1a1; border-radius: 1rem 1rem 0 0;">
+                                    <i class="fa-regular fa-image fa-3x mb-2"></i>
+                                    <span style="font-size: 0.9rem; font-weight: 500;">No Image Available</span>
+                                </div>
+                            <% } %>
+                            <div class="card-body mt-2 p-0">
+                                <p class="card-text mb-1 text-dark"><b><%= listing.location %>, <%= listing.country %></b></p>
+                                <p class="card-text text-muted mb-2"><%= listing.title %></p>
+                                <p class="card-text text-dark"><b>&#8377; <%= listing.price.toLocaleString("en-IN") %></b> / night</p>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            <% }) %>
+        </div>
+    <% } %>
+<% } else if (allListings) { %>
+    <div class="location-header">
+        <% if (typeof city !== 'undefined' && city) { %>
+            <h2 class="location-title">Homes in <%= city %></h2>
+        <% } else if (typeof category !== 'undefined' && category) { %>
+            <h2 class="location-title"><%= category %> Homes</h2>
+        <% } else { %>
+            <h2 class="location-title">Explore Properties</h2>
+        <% } %>
+    </div>
+    <div class="row row-cols-lg-4 row-cols-md-3 row-cols-sm-1 mt-3">
+        <% for(let listing of allListings) { %>
+            <div class="col mb-4">
+                <div class="card listing-card shadow-sm position-relative" style="border-radius: 1rem; border: none;">
+                    <% if(typeof currUser !== 'undefined' && currUser) { %>
+                        <i class="fa-heart wishlist-icon <%= currUser.wishlist && currUser.wishlist.includes(listing._id) ? 'fa-solid' : 'fa-regular' %>" data-id="<%= listing._id %>"></i>
+                    <% } %>
+                    <a href="/listings/<%= listing._id %>" class="listing-link">
+                        <% 
+                            let imgUrl = "";
+                            if (listing.images && listing.images.length > 0) {
+                                imgUrl = listing.images[0].url || listing.images[0];
+                            } else if (listing.image) {
+                                    if (typeof listing.image === 'string') {
+                                    imgUrl = listing.image;
+                                } else if (Array.isArray(listing.image) && listing.image.length > 0) {
+                                    imgUrl = listing.image[0].url || listing.image[0];
+                                } else if (listing.image.url) {
+                                    imgUrl = listing.image.url;
+                                }
+                            }
+                        %>
+                        <% if (imgUrl) { %>
+                            <img src="<%= imgUrl %>" class="card-img-top" alt="listing_image" style="height: 18rem; object-fit: cover; border-radius: 1rem 1rem 0 0;">
+                        <% } else { %>
+                            <div class="card-img-top d-flex flex-column align-items-center justify-content-center" style="height: 18rem; background-color: #e9ecef; color: #a1a1a1; border-radius: 1rem 1rem 0 0;">
+                                <i class="fa-regular fa-image fa-3x mb-2"></i>
+                                <span style="font-size: 0.9rem; font-weight: 500;">No Image Available</span>
+                            </div>
+                        <% } %>
+                        <div class="card-body mt-2 p-0">
+                            <p class="card-text mb-1 text-dark"><b><%= listing.location %>, <%= listing.country %></b></p>
+                            <p class="card-text text-muted mb-2"><%= listing.title %></p>
+                            <p class="card-text text-dark"><b>&#8377; <%= listing.price.toLocaleString("en-IN") %></b> / night</p>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        <% } %>
+    </div>
+<% } %>

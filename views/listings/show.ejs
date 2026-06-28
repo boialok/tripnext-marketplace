@@ -1,0 +1,353 @@
+<% layout("/layouts/boilerplate") %>
+<script>
+  const mapToken = "<%= process.env.MAP_TOKEN %>";
+  const listingLocation = "<%= listing.location %>";
+</script>
+<style>
+  .gallery-image-grid {
+    display: grid;
+    gap: 8px;
+    border-radius: 1rem;
+    overflow: hidden;
+    margin-top: 1rem;
+    margin-bottom: 2rem;
+    position: relative;
+    height: 50vh; 
+    min-height: 350px;
+  }
+  .gallery-image-grid img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: filter 0.2s ease;
+  }
+  .gallery-image-grid img:hover {
+    filter: brightness(0.85);
+    cursor: pointer;
+  }
+  .img-count-5 { grid-template-columns: 2fr 1fr 1fr; grid-template-rows: 1fr 1fr; }
+  .img-count-5 .img-slot-0 { grid-column: 1 / 2; grid-row: 1 / 3; }
+  .img-count-5 .img-slot-1 { grid-column: 2 / 3; grid-row: 1 / 2; }
+  .img-count-5 .img-slot-2 { grid-column: 3 / 4; grid-row: 1 / 2; }
+  .img-count-5 .img-slot-3 { grid-column: 2 / 3; grid-row: 2 / 3; }
+  .img-count-5 .img-slot-4 { grid-column: 3 / 4; grid-row: 2 / 3; }
+  .img-count-4 { grid-template-columns: 2fr 1fr 1fr; grid-template-rows: 1fr 1fr; }
+  .img-count-4 .img-slot-0 { grid-column: 1 / 2; grid-row: 1 / 3; }
+  .img-count-4 .img-slot-1 { grid-column: 2 / 3; grid-row: 1 / 2; }
+  .img-count-4 .img-slot-2 { grid-column: 3 / 4; grid-row: 1 / 2; }
+  .img-count-4 .img-slot-3 { grid-column: 2 / 4; grid-row: 2 / 3; }
+  .img-count-3 { grid-template-columns: 2fr 1fr; grid-template-rows: 1fr 1fr; }
+  .img-count-3 .img-slot-0 { grid-column: 1 / 2; grid-row: 1 / 3; }
+  .img-count-3 .img-slot-1 { grid-column: 2 / 3; grid-row: 1 / 2; }
+  .img-count-3 .img-slot-2 { grid-column: 2 / 3; grid-row: 2 / 3; }
+  .img-count-2 { grid-template-columns: 1fr 1fr; grid-template-rows: 1fr; }
+  .img-count-2 .img-slot-0 { grid-column: 1 / 2; }
+  .img-count-2 .img-slot-1 { grid-column: 2 / 3; }
+  .gallery-image-grid.img-count-1 {
+    display: block;
+    height: auto;
+    min-height: unset;
+    background-color: #f8f9fa;
+  }
+  .gallery-image-grid.img-count-1 img {
+    width: 100%;
+    height: auto;
+    max-height: 65vh;
+    object-fit: contain;
+  }
+  .show-all-btn {
+    position: absolute;
+    bottom: 24px;
+    right: 24px;
+    background: white;
+    border: 1px solid black;
+    padding: 7px 15px;
+    border-radius: 0.5rem;
+    font-weight: 500;
+    cursor: pointer;
+    z-index: 10;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    transition: background-color 0.2s ease;
+  }
+  .show-all-btn:hover {
+    background: #f8f9fa;
+  }
+  .guest-fav-box {
+      border: 1px solid #dddddd;
+      border-radius: 1rem;
+      box-shadow: 0 6px 16px rgba(0,0,0,0.06);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+  }
+  .guest-fav-text {
+      font-weight: 600;
+      font-size: 1.05rem;
+      text-align: center;
+      flex: 1;
+      padding: 0 1rem;
+  }
+  .stat-block {
+      text-align: center;
+      padding: 0 1.5rem;
+      border-left: 1px solid #dddddd;
+  }
+  .stat-block.last {
+      padding-right: 0.5rem;
+  }
+  @media (max-width: 992px) {
+      .guest-fav-box {
+          flex-direction: column;
+          gap: 1.5rem;
+      }
+      .stat-block {
+          border-left: none;
+          padding: 0;
+          border-right: none;
+      }
+      .stats-container {
+          display: flex;
+          width: 100%;
+          justify-content: space-evenly;
+          border-top: 1px solid #dddddd;
+          padding-top: 1rem;
+      }
+  }
+</style>
+<div class="row mt-3 mb-5">
+    <div class="col-10 offset-1">
+         <div class="d-flex justify-content-between align-items-center mb-3">
+            <h3 class="mb-0"><%= listing.title %></h3>
+            <% if (currUser) { %>
+    <form action="/wishlist/<%= listing._id %>" method="POST" class="d-inline-block">
+        <button type="submit" class="btn p-0 border-0 bg-transparent" style="cursor: pointer; transition: transform 0.2s ease;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
+            
+            <% let isWished = currUser.wishlist && currUser.wishlist.includes(listing._id); %>
+            
+            <% if (isWished) { %>
+                <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" style="display: block; fill: #fe424d; height: 32px; width: 32px; stroke: white; stroke-width: 2; overflow: visible; filter: drop-shadow(0px 2px 4px rgba(0,0,0,0.2));">
+                    <path d="M16 28.02s-14-8.85-14-17.02A6.98 6.98 0 0 1 9 4c2.38 0 4.63 1.05 6 2.72C16.37 5.05 18.62 4 21 4a6.98 6.98 0 0 1 7 7c0 8.17-14 17.02-14 17.02z"></path>
+                </svg>
+            <% } else { %>
+                <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" style="display: block; fill: rgba(0, 0, 0, 0.4); height: 32px; width: 32px; stroke: white; stroke-width: 2.5; overflow: visible; filter: drop-shadow(0px 2px 4px rgba(0,0,0,0.3));">
+                    <path d="M16 28.02s-14-8.85-14-17.02A6.98 6.98 0 0 1 9 4c2.38 0 4.63 1.05 6 2.72C16.37 5.05 18.62 4 21 4a6.98 6.98 0 0 1 7 7c0 8.17-14 17.02-14 17.02z"></path>
+                </svg>
+            <% } %>
+            
+        </button>
+    </form>
+<% } %>
+        </div>
+        <% if(listing.images && listing.images.length > 0) { %>
+            <% let displayCount = listing.images.length > 5 ? 5 : listing.images.length; %>
+            <div class="gallery-image-grid img-count-<%= displayCount %>">
+                <% listing.images.slice(0, 5).forEach((img, i) => { %>
+                    <img src="<%= img.url %>" class="img-slot-<%= i %> gallery-image" data-index="<%= i %>" alt="listing_image" />
+                <% }) %>
+                <button class="show-all-btn" onclick="openModalToSlide(0)">
+                    <i class="fa-solid fa-braille"></i> Show all photos 
+                    <% if(listing.images.length > 5) { %> (<%= listing.images.length %>) <% } %>
+                </button>
+            </div>
+        <% } else if(listing.image && listing.image.url) { %>
+            <div class="gallery-image-grid img-count-1">
+                <img src="<%= listing.image.url %>" class="img-slot-0" alt="listing_image" />
+            </div>
+        <% } %>
+        <div class="row mt-4">
+            <div class="col-md-8 pe-5">
+                <h4 class="mb-1"><b><%= listing.propertyType %> in <%= listing.location.split(',')[0] %>, <%= listing.country %></b></h4>
+                <p class="text-muted <%= listing.averageRating > 4.5 ? 'mb-4' : 'mb-1' %>"><%= listing.maxGuests %> guests &middot; <%= listing.bedrooms %> bedrooms &middot; <%= listing.beds %> beds &middot; <%= listing.baths %> <%= listing.baths === 1 ? 'bathroom' : 'bathrooms' %></p>
+                <% if (listing.averageRating > 4.5) { %>
+                    <div class="guest-fav-box">
+                        <div class="d-flex align-items-center justify-content-center">
+                            <i class="fa-solid fa-award" style="font-size: 2.2rem; color: #ffb805; margin-right: 0.8rem;"></i>
+                            <div class="text-start">
+                                <h5 class="mb-0" style="font-weight: 700; font-size: 1.1rem; line-height: 1.1;">Guest</h5>
+                                <h5 class="mb-0" style="font-weight: 700; font-size: 1.1rem; line-height: 1.1;">favourite</h5>
+                            </div>
+                        </div>
+                        <div class="guest-fav-text">
+                            Loved by most of the guest
+                        </div>
+                        <div class="stats-container d-flex">
+                            <div class="stat-block">
+                                <h3 class="mb-0" style="font-weight: 700;"><%= listing.averageRating.toFixed(2) %></h3>
+                                <div style="font-size: 0.65rem; color: #222;">
+                                    <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                                </div>
+                            </div>
+                            <div class="stat-block last">
+                                <h3 class="mb-0" style="font-weight: 700;"><%= listing.reviews.length %></h3>
+                                <a href="#reviews" class="text-dark text-decoration-underline" style="font-size: 0.85rem; font-weight: 500;">Reviews</a>
+                            </div>
+                        </div>
+                    </div>
+                <% } else { %>
+                    <div class="mb-4" style="font-size: 1.1rem; font-weight: 600;">
+                        <i class="fa-solid fa-star"></i> <%= listing.averageRating > 0 ? listing.averageRating.toFixed(2) : "New" %> 
+                        <% if(listing.reviews.length > 0) { %>
+                            &middot; <a href="#reviews" class="text-dark text-decoration-underline"><%= listing.reviews.length %> <%= listing.reviews.length === 1 ? 'review' : 'reviews' %></a>
+                        <% } %>
+                    </div>
+                <% } %>
+                <hr class="mb-4" />
+                <% 
+                    let hostTimeText = "Joined recently";
+                    if (listing.owner && listing.owner._id) {
+                        const hostJoinDate = listing.owner._id.getTimestamp(); 
+                        const now = new Date();
+                        let yearsHosting = now.getFullYear() - hostJoinDate.getFullYear();
+                        if (now.getMonth() < hostJoinDate.getMonth() || (now.getMonth() === hostJoinDate.getMonth() && now.getDate() < hostJoinDate.getDate())) {
+                            yearsHosting--;
+                        }
+                        if (yearsHosting === 1) {
+                            hostTimeText = "1 year hosting";
+                        } else if (yearsHosting > 1) {
+                            hostTimeText = yearsHosting + " years hosting";
+                        } else {
+                            let months = (now.getFullYear() - hostJoinDate.getFullYear()) * 12 + (now.getMonth() - hostJoinDate.getMonth());
+                            if (months > 0) {
+                                hostTimeText = months === 1 ? "1 month hosting" : months + " months hosting";
+                            }
+                        }
+                    }
+                %>
+                <div class="d-flex align-items-center mb-4">
+                    <img src="https://ui-avatars.com/api/?name=<%= listing.owner.username %>&background=random&color=fff&rounded=true&bold=true&size=50" alt="Host Avatar" class="me-3" style="width: 50px; height: 50px; border-radius: 50%; box-shadow: 0 2px 5px rgba(0,0,0,0.2);">
+                    <div>
+                        <h5 class="mb-0" style="font-weight: 600;">Hosted by <%= listing.owner.username %></h5>
+                        <p class="text-muted mb-0" style="font-size: 0.9rem;"><%= hostTimeText %></p>
+                    </div>
+                </div>
+                <hr class="mb-4" />
+                <p class="card-text mt-4 mb-4"><%= listing.description %></p>
+            </div>
+            <div class="col-md-4">
+                <div class="card p-4 shadow-sm" style="border-radius: 1rem; border: 1px solid #ddd;">
+                    <h5><b>&#8377; <%= listing.price.toLocaleString("en-IN") %></b> <span class="text-muted" style="font-size: 1rem; font-weight: normal;"> per night</span></h5>
+                    <form action="/listings/<%= listing._id %>/book" method="POST">
+    <button type="submit" class="btn w-100 mt-3" style="background-color: #fe424d; color: white; font-weight: 600; border-radius: 0.5rem; padding: 0.7rem;">
+        Book now
+    </button>
+</form>
+                </div>
+            </div>
+        </div>
+        <% if(currUser && listing.owner._id.equals(currUser._id)) { %>
+        <div class="btns mt-4">
+            <a href="/listings/<%= listing._id %>/edit" class="btn btn-dark col-2 mb-3">Edit</a>
+            <form method="POST" action="/listings/<%= listing._id%>?_method=DELETE" class="ms-3">
+                <button class="btn btn-dark mb-3 delete-btn">Delete</button>
+            </form>
+        </div>
+        <% } %>
+        <hr class="mt-4 mb-4"/>
+        <div class="row" id="reviews">
+            <div class="col-12">
+                <% if(currUser) { %>
+                <h4>Leave a Review</h4>
+                <form action="/listings/<%= listing._id %>/reviews" method="POST" novalidate class="needs-validation mb-5">
+                    <div class="mb-3 mt-3">
+                        <label for="rating" class="form-label">Rating</label>
+                        <fieldset class="starability-slot">
+                            <input type="radio" id="no-rate" class="input-no-rate" name="review[rating]" value="1" checked aria-label="No rating." />
+                            <input type="radio" id="first-rate1" name="review[rating]" value="1" />
+                            <label for="first-rate1" title="Terrible">1 star</label>
+                            <input type="radio" id="first-rate2" name="review[rating]" value="2" />
+                            <label for="first-rate2" title="Not good">2 stars</label>
+                            <input type="radio" id="first-rate3" name="review[rating]" value="3" />
+                            <label for="first-rate3" title="Average">3 stars</label>
+                            <input type="radio" id="first-rate4" name="review[rating]" value="4" />
+                            <label for="first-rate4" title="Very good">4 stars</label>
+                            <input type="radio" id="first-rate5" name="review[rating]" value="5" />
+                            <label for="first-rate5" title="Amazing">5 stars</label>
+                        </fieldset>
+                    </div>
+                    <div class="mb-3 mt-3">
+                        <label for="comment" class="form-label">Comments</label>
+                        <textarea name="review[comment]" id="comment" cols="30" rows="5" class="form-control" required></textarea>
+                        <div class="invalid-feedback">Please add some comments for review!</div>
+                    </div>
+                    <button class="btn btn-outline-dark">Submit</button>
+                </form>
+                <% } %>
+                <% if(listing.reviews.length > 0) { %>
+                <p><b>All Reviews</b></p>
+                <div class="row">
+                    <% for(let review of listing.reviews) { %>
+                    <div class="card col-md-5 ms-3 mb-3 p-3 shadow-sm" style="border-radius: 1rem;">
+                        <div class="card-body p-0">
+                            <h5 class="card-title">@<%= review.author.username %></h5>
+                            <p class="starability-result card-text mb-2" data-rating="<%= review.rating %>"></p>
+                            <p class="card-text"><%= review.comment %></p>
+                            <form class="mb-1" method="POST" action="/listings/<%= listing._id %>/reviews/<%= review._id %>?_method=DELETE">
+                                <button class="btn btn-sm btn-dark">Delete</button>
+                            </form>
+                        </div>
+                    </div>
+                    <% } %>
+                </div>
+                <% } %>
+            </div>
+        </div>
+        <hr class="mt-4 mb-4"/>
+        <div class="row mb-5">
+            <div class="col-12">
+                <h3>Where you'll be</h3>
+                <div id="map" style="border-radius: 1rem;"></div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="imageGalleryModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-fullscreen">
+    <div class="modal-content bg-dark text-white">
+      <div class="modal-header border-0 pb-0">
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body d-flex justify-content-center align-items-center p-0">
+        <div id="modalCarousel" class="carousel slide w-100 h-100" data-bs-ride="false">
+          <div class="carousel-inner h-100">
+            <% if(listing.images && listing.images.length > 0) { %>
+                <% listing.images.forEach((img, i) => { %>
+                  <div class="carousel-item h-100 <%= i === 0 ? 'active' : '' %>">
+                    <img src="<%= img.url %>" class="d-block w-100 h-100" style="object-fit: contain;" alt="Listing Image <%= i+1 %>">
+                  </div>
+                <% }) %>
+            <% } %>
+          </div>
+          <% if(listing.images && listing.images.length > 1) { %>
+          <button class="carousel-control-prev" type="button" data-bs-target="#modalCarousel" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+          </button>
+          <button class="carousel-control-next" type="button" data-bs-target="#modalCarousel" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+          </button>
+          <% } %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+    function openModalToSlide(index) {
+        var modalElement = document.getElementById('imageGalleryModal');
+        var myModal = bootstrap.Modal.getOrCreateInstance(modalElement);
+        var carouselElement = document.getElementById('modalCarousel');
+        var carousel = bootstrap.Carousel.getOrCreateInstance(carouselElement);
+        myModal.show();
+        carousel.to(parseInt(index));
+    }
+    document.addEventListener('DOMContentLoaded', () => {
+        const galleryImages = document.querySelectorAll('.gallery-image');
+        galleryImages.forEach(img => {
+            img.addEventListener('click', function() {
+                openModalToSlide(this.getAttribute('data-index'));
+            });
+        });
+    });
+</script>
+<script src="/js/map.js" defer></script>

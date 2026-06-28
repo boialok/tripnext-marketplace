@@ -1,0 +1,44 @@
+<% layout("/layouts/boilerplate") %>
+
+<div class="row mt-5 mb-5">
+    <div class="col-12 mb-5">
+        <h1 class="fw-bold mb-1">Account</h1>
+        <p class="text-muted fs-5"><span class="fw-semibold text-dark"><%= currUser.username %></span>, <%= currUser.email %> · 
+        <!-- <a href="/profile" class="text-dark fw-bold text-decoration-none border-bottom border-dark">Go to profile</a> -->
+        </p>
+    </div>
+
+    <div class="row g-4">
+        
+        <div class="col-md-6 col-lg-4">
+            <a href="/my-bookings" class="text-decoration-none text-dark">
+                <div class="card h-100 p-4 border-0 shadow-sm rounded-4" style="transition: box-shadow 0.2s ease;" onmouseover="this.classList.add('shadow')" onmouseout="this.classList.remove('shadow')">
+                    <i class="fa-solid fa-plane-departure fs-2 mb-4" style="color: #fe424d;"></i>
+                    <h5 class="fw-bold">My Bookings</h5>
+                    <p class="text-muted mb-0" style="font-size: 0.95rem;">View your Reserved stays, and detailed receipts.</p>
+                </div>
+            </a>
+        </div>
+
+        <div class="col-md-6 col-lg-4">
+            <a href="/wishlist" class="text-decoration-none text-dark">
+                <div class="card h-100 p-4 border-0 shadow-sm rounded-4" style="transition: box-shadow 0.2s ease;" onmouseover="this.classList.add('shadow')" onmouseout="this.classList.remove('shadow')">
+                    <i class="fa-solid fa-heart fs-2 mb-4" style="color: #fe424d;"></i>
+                    <h5 class="fw-bold">Wishlists</h5>
+                    <p class="text-muted mb-0" style="font-size: 0.95rem;">Review the properties and stays you have saved for later.</p>
+                </div>
+            </a>
+        </div>
+
+        <div class="col-md-6 col-lg-4">
+            <a href="#" class="text-decoration-none text-dark">
+                <div class="card h-100 p-4 border-0 shadow-sm rounded-4" style="transition: box-shadow 0.2s ease;" onmouseover="this.classList.add('shadow')" onmouseout="this.classList.remove('shadow')">
+                    <i class="fa-solid fa-shield-halved fs-2 mb-4" style="color: #fe424d;"></i>
+                    <h5 class="fw-bold">Login & security</h5>
+                    <p class="text-muted mb-0" style="font-size: 0.95rem;">Update your password and secure your account.</p>
+                </div>
+            </a>
+        </div>
+        
+    </div>
+</div>

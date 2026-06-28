@@ -1,0 +1,59 @@
+<% layout("/layouts/boilerplate") %>
+<div class="row mt-5 mb-5">
+    <div class="col-8 offset-2 text-center">
+        <h3>Confirm Your Booking</h3>
+        <p class="fs-5 mt-3">You are booking: <b><%= listing.title %></b></p>
+        <p class="fs-4">Total Amount: <b>₹<%= listing.price.toLocaleString("en-IN") %></b></p>
+        
+        <button id="rzp-button" class="btn btn-dark mt-3 px-5 py-2" style="background-color: #fe424d; font-weight: 600; border: none;">
+            Proceed to Secure Payment
+        </button>
+    </div>
+</div>
+
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script>
+    var options = {
+        "key": "<%= key_id %>", 
+        "amount": "<%= order.amount %>", 
+        "currency": "INR",
+        "name": "TripNext",
+        "description": "Booking for <%= listing.title %>",
+        "image": "/favicon.png", 
+        "order_id": "<%= order.id %>", 
+        "handler": function (response){
+            // SECURE POST: Send the Razorpay Payment ID to the backend
+            const form = document.createElement("form");
+            form.method = "POST";
+            form.action = `/listings/<%= listing._id %>/book/verify`;
+
+            const hiddenInput = document.createElement("input");
+            hiddenInput.type = "hidden";
+            hiddenInput.name = "razorpay_payment_id";
+            hiddenInput.value = response.razorpay_payment_id;
+
+            form.appendChild(hiddenInput);
+            document.body.appendChild(form);
+            form.submit();
+        },
+        "modal": {
+            "ondismiss": function(){
+                // If the user closes the pop-up, cancel safely
+                window.location.href = `/listings/<%= listing._id %>?canceled=true`;
+            }
+        },
+        "prefill": {
+            "method": "upi"
+        },
+        "theme": {
+            "color": "#fe424d"
+        }
+    };
+    
+    var rzp1 = new Razorpay(options);
+    
+    document.getElementById('rzp-button').onclick = function(e){
+        rzp1.open();
+        e.preventDefault();
+    }
+</script>
